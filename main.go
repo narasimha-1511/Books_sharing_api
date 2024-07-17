@@ -12,5 +12,5 @@ func main(){
 
 	routes.Routes(router);
 
-	router.Run(":3000a")
+	router.Run(":3000")
 }
