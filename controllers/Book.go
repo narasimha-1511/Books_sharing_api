@@ -115,6 +115,37 @@ func BorrowBook(c *gin.Context){
 	})
 }
 
+func GetBorrowedBooks(c *gin.Context){
+	var borrowed []models.Borrowed
+
+	result := config.DB.Find(&borrowed)
+
+	if result.Error != nil {
+		// Handle error
+		fmt.Println(result.Error)
+	}
+
+	var borrowedData []gin.H
+
+	for _, borrow := range borrowed {
+		var book models.Book
+		config.DB.Where("book_id = ?", borrow.BookID).First(&book)
+
+		borrowedData = append(borrowedData, gin.H{
+			"borrowed_id": borrow.BorrowedID,
+			"book_id": borrow.BookID,
+			"book_name": book.Name,
+			"start_time": borrow.StartTime,
+			"end_time": borrow.EndTime,
+			"returned": borrow.Returned,
+		})
+	}
+
+	c.JSON(200, gin.H{
+		"BorrowedBooks": borrowedData,
+	})
+
+}
 
 func ReturnBook(c *gin.Context){
 
